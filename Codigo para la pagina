@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Estadístico - Calidad del Agua en Europa</title>
+    
+    <!-- Librería de íconos FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- NUEVA PALETA DE COLORES (INGENIERÍA AMBIENTAL / DISEÑO PREMIUM) ---
+           Fondo General: Gris Pizarra Muy Oscuro (#1a1d20)
+           Contenedores: Gris Carbono (#24282c)
+           Acentos Principales: Verde Esmeralda/Selva (#2ecc71 y #27ae60)
+           Texto: Blanco e Hilo Gris Claro (#f8f9fa y #e9ecef)
+        */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1d20; /* Nuevo fondo gris pizarra oscuro */
+            color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- HUD RENOVADO (Estilo Minimalista Verde/Gris) --- */
+        .hud-navegacion {
+            position: fixed;
+            top: 15px;
+            width: 95%;
+            max-width: 1300px;
+            height: 65px;
+            background: rgba(36, 40, 44, 0.85); /* Gris carbono translúcido */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border: 1px solid rgba(46, 204, 113, 0.25); /* Borde verde sutil */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            box-sizing: border-box;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .hud-logo {
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #2ecc71, #a3e4d7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-menu {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .hud-item a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hud-item a:hover {
+            color: #ffffff;
+            background: rgba(46, 204, 113, 0.15); /* Destaque en verde al pasar el mouse */
+        }
+
+        .hud-idioma {
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        /* --- BANNER PRINCIPAL --- */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 40px 20px; 
+            box-sizing: border-box;
+            overflow: hidden;
+            background-color: #111315;
+        }
+
+        /* Ajuste técnico del reproductor de video de fondo */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .video-background iframe {
+            width: 100%;
+            height: 100%;
+            transform: scale(1.15); /* Escala para asegurar que cubra todo el fondo sin bordes negros */
+            border: none;
+        }
+
+        /* Capa oscura superpuesta verde-grisácea */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(26, 29, 32, 0.65), rgba(26, 29, 32, 0.9));
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cintillo {
+            color: #2ecc71; /* Verde esmeralda para destacar */
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .titulo-degradado {
+            font-size: 44px;
+            font-weight: 800;
+            max-width: 1000px;
+            margin: 0 0 20px 0;
+            /* Degradado de Blanco Puro a Verde Menta Suave */
+            background: linear-gradient(135deg, #ffffff, #a3e4d7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .linea-divisoria {
+            width: 120px;
+            height: 3px;
+            background-color: #2ecc71;
+            margin-bottom: 25px;
+        }
+
+        .subtitulo {
+            font-size: 17px;
+            max-width: 750px;
+            line-height: 1.6;
+            color: #e9ecef;
+            margin-bottom: 40px;
+        }
+
+        /* --- ETIQUETAS TECNOLÓGICAS VERDES --- */
+        .contenedor-etiquetas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            max-width: 1100px;
+        }
+
+        .etiqueta {
+            background-color: rgba(36, 40, 44, 0.9); 
+            padding: 9px 18px;
+            border-radius: 6px; /* Bordes cuadrados modernos en vez de circulares */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(46, 204, 113, 0.2); 
+        }
+
+        .etiqueta i {
+            color: #2ecc71; 
+        }
+
+        /* --- SECCIÓN 3: CONTENEDORES DE INFORMACIÓN --- */
+        .contenedor-informacion {
+            width: 90%;
+            max-width: 1100px;
+            margin-top: 40px;
+            padding: 0 20px 60px 20px;
+            box-sizing: border-box;
+        }
+
+        .caja-alerta {
+            background-color: #24282c; /* Gris carbono */
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2ecc71; /* Línea verde izquierda */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .caja-alerta h3 {
+            color: #2ecc71;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .caja-alerta p {
+            margin: 0;
+            line-height: 1.6;
+            text-align: center;
+            color: #e9ecef;
+        }
+
+        .caja-mision-vision {
+            background-color: #24282c;
+            border-radius: 6px;
+            padding: 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .caja-mision-vision h2 {
+            color: #ffffff;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+        }
+
+        .columnas-mv {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .columna {
+            flex: 1;
+            text-align: left; /* Alineación limpia a la izquierda */
+        }
+
+        .columna h4 {
+            color: #2ecc71; 
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .columna p {
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hud-navegacion { display: none; } 
+            .columnas-mv { flex-direction: column; gap: 30px; }
+            .titulo-degradado { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HUD / BARRA DE NAVEGACIÓN -->
+    <nav class="hud-navegacion">
+        <div class="hud-logo">
+            <i class="fa-solid fa-droplet"></i> FIGEMPA
+        </div>
+        <ul class="hud-menu">
+            <li class="hud-item"><a href="#mapa"><i class="fa-solid fa-earth-europe"></i> Mapa Interactivo</a></li>
+            <li class="hud-item"><a href="#inicio"><i class="fa-solid fa-house"></i> Inicio</a></li>
+            <li class="hud-item"><a href="#introduccion">Introducción</a></li>
+            <li class="hud-item"><a href="#descriptiva">Estadística Descriptiva</a></li>
+            <li class="hud-item"><a href="#inferencial">Estadística Inferencial</a></li>
+            <li class="hud-item"><a href="#regresion">Modelos de Regresión</a></li>
+            <li class="hud-item"><a href="#ml">Machine Learning</a></li>
+        </ul>
+        <div class="hud-idioma">ES / EN</div>
+    </nav>
+
+    <!-- BANNER PRINCIPAL CON TRUCO DE REPRODUCCIÓN LOCAL -->
+    <section id="inicio" class="hero-section">
+        
+        <div class="video-background">
+            <!-- Forzamos la carga del reproductor embebido compatible con entornos locales -->
+            <iframe src="https://www.youtube.com/embed/Txd6Nzqk1kU?enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=Txd6Nzqk1kU&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3" allow="autoplay; encrypted-media"></iframe>
+        </div>
+        
+        <div class="video-overlay"></div>
+
+        <div class="hero-content">
+            <div class="cintillo">FIGEMPA • Universidad Central del Ecuador • 2026</div>
+            <h1 class="titulo-degradado">Análisis Estadístico de la Contaminación del Agua en Europa</h1>
+            <div class="linea-divisoria"></div>
+            <p class="subtitulo">
+                Análisis de datos hidroquímicos y modelado estadístico, aplicando métodos descriptivos e inferenciales con el uso del lenguaje R en RStudio.
+            </p>
+
+            <!-- ETIQUETAS TECNOLÓGICAS FORMATO ING. AMBIENTAL -->
+            <div class="contenedor-etiquetas">
+                <div class="etiqueta"><i class="fa-solid fa-chart-simple"></i> Estadística Descriptiva</div>
+                <div class="etiqueta"><i class="fa-solid fa-chart-line"></i> Estadística Inferencial</div>
+                <div class="etiqueta"><i class="fa-solid fa-square-poll-vertical"></i> Regresión</div>
+                <div class="etiqueta"><i class="fa-solid fa-microchip"></i> Machine Learning</div>
+                <div class="etiqueta"><i class="fa-brands fa-r-project"></i> RStudio</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENEDORES FORMATO ORIGINAL -->
+    <main class="contenedor-informacion">
+        
+        <div class="caja-alerta">
+            <h3>¡IMPORTANTE!</h3>
+            <p>Este proyecto tiene un carácter exclusivamente académico y se encuentra en continuo desarrollo. Los datos y análisis presentados se utilizan únicamente con fines educativos.</p>
+        </div>
+
+        <div class="caja-mision-vision">
+            <h2>MISIÓN - VISIÓN</h2>
+            <div class="columnas-mv">
+                <div class="columna">
+                    <h4>Misión</h4>
+                    <p>Aplicar métodos estadísticos y herramientas geoespaciales para identificar y cuantificar los factores críticos que determinan la contaminación por nutrientes y la calidad del agua en las cuencas europeas.</p>
+                </div>
+                <div class="columna">
+                    <h4>Visión</h4>
+                    <p>Convertirnos en un análisis estadístico clave que revele las verdaderas tendencias de calidad hidrológica y aporte datos rigurosos para la gestión ambiental.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
